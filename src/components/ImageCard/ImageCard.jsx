@@ -11,7 +11,6 @@ const ImageCard = ({ alt_description, urls, updateModalStateData }) => {
         src={urls.small}
         alt={alt_description}
       />
-      <p className={styles.cardDescription}>{alt_description}</p>
     </div>
   );
 };

@@ -10,12 +10,8 @@ const ImageModal = ({ modalIsOpen, closeModal, src, alt }) => {
       className={styles.modal}
       overlayClassName={styles.overlay}
     >
-      <button onClick={closeModal} className={styles.modalBtn}>
-        close
-      </button>
       <div>
         <img className={styles.modalImg} src={src} alt={alt} />
-        <p className={styles.modalText}>{alt}</p>
       </div>
     </Modal>
   );
