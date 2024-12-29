@@ -18,19 +18,30 @@ function App() {
   const [modalImage, setModalImage] = useState("");
   const [altDescription, setAltDescription] = useState("");
   const [errorDetails, setErrorDetails] = useState(null);
+  const [gallery, setGallery] = useState([]);
 
   const ref = useRef();
 
-  const { gallery, isLoading, isError, totalPages } = useGallery(
-    queryValue,
-    page
-  );
+  const {
+    gallery: fetchedGallery,
+    isLoading,
+    isError,
+    totalPages,
+  } = useGallery(queryValue, page);
 
   useEffect(() => {
     if (isError) {
-      setErrorDetails("Something went wrong. Please try again later."); // Przykładowa wiadomość błędu
+      setErrorDetails("Something went wrong. Please try again later.");
     }
   }, [isError]);
+
+  useEffect(() => {
+    if (page === 1) {
+      setGallery(fetchedGallery);
+    } else {
+      setGallery((prevGallery) => [...prevGallery, ...fetchedGallery]);
+    }
+  }, [fetchedGallery, page]);
 
   useEffect(() => {
     if (page === 1) return;
@@ -41,10 +52,11 @@ function App() {
   const handleQuery = (newQuery) => {
     setQueryValue(newQuery);
     setPage(1);
+    setGallery([]);
   };
 
   const handleLoadMore = () => {
-    setPage(page + 1);
+    setPage((prevPage) => prevPage + 1);
   };
 
   const isActive = useMemo(() => page === totalPages, [page, totalPages]);
@@ -73,8 +85,7 @@ function App() {
         />
       )}
       {isLoading && <Loader />}
-      {isError && <ErrorMessage errorDetails={errorDetails} />}{" "}
-      {/* Szczegóły błędu */}
+      {isError && <ErrorMessage errorDetails={errorDetails} />}
       {gallery.length > 0 && !isLoading && !isError && (
         <LoadMoreBtn handleLoadMore={handleLoadMore} isActive={isActive} />
       )}

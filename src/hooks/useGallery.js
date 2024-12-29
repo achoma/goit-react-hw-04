@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import fetchGalleryPhotos from "../api/photos-api";
 
 const useGallery = (queryValue, page) => {
-  const [gallery, setGallery] = useState([]);
+  const [data, setData] = useState({ results: [], total_pages: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     if (queryValue === "") return;
@@ -14,10 +13,8 @@ const useGallery = (queryValue, page) => {
       try {
         setIsLoading(true);
         setIsError(false);
-        const data = await fetchGalleryPhotos(queryValue, page);
-        if (data.total === 0) return;
-        setGallery((prevGallery) => [...prevGallery, ...data.results]);
-        setTotalPages(data.total_pages);
+        const fetchedData = await fetchGalleryPhotos(queryValue, page);
+        setData(fetchedData);
       } catch (error) {
         setIsError(true);
       } finally {
@@ -28,7 +25,12 @@ const useGallery = (queryValue, page) => {
     handleSearch();
   }, [queryValue, page]);
 
-  return { gallery, isLoading, isError, totalPages };
+  return {
+    gallery: data.results,
+    totalPages: data.total_pages,
+    isLoading,
+    isError,
+  };
 };
 
 export default useGallery;
